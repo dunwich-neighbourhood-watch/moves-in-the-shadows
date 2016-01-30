@@ -112,9 +112,17 @@ public class GameController : MonoBehaviour
 
     private readonly List<string> RitualNames = new List<string>
         {
-            "Elder Thing Swing",
+            "Elder Swing",
             "Hastur's Hustle",
             "Nyarlathotep Two-Step",
-            "Iä! Iä! Cthulhu fh'Tango!"
+            "Iä! Iä! Cthulhu fh'Tango!",
+            "Yog-Sothoth Yablochko",
+            "The Great Rumba of Yith",
+            "The Samba Out of Time",
+            "Moshkatonic University",
+            "Flying Polyp Polka",
+            "Jitterbugg-Shash",
+            "Dzéwà Danza",
+            "The Nameless Twist"
         };
 }
