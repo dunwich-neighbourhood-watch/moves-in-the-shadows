@@ -6,6 +6,9 @@ public class PlayerController : MonoBehaviour
 
     private float next_input = 0.0f;
 
+    public AudioSource audioSource;
+    public AudioClip[] audioClip = new AudioClip[4];
+
     public int ReturnMove ()
     {
         // move quads across screen
@@ -22,12 +25,28 @@ public class PlayerController : MonoBehaviour
             {
                 // do nothing
             }
-            else if (h_axis == 1) move = 0;
-            else if (h_axis == -1) move = 1;
-            else if (v_axis == 1) move = 2;
-            else if (v_axis == -1) move = 3;
-            next_input = Time.time + InputDelay;
-        }
+            else if (h_axis == 1)
+            {
+                move = 0;
+                audioSource.PlayOneShot(audioClip[0]);
+            }
+            else if (h_axis == -1)
+            {
+                move = 1;
+                audioSource.PlayOneShot(audioClip[1]);
+            }
+            else if (v_axis == 1)
+            {
+                move = 2;
+                audioSource.PlayOneShot(audioClip[2]);
+            }
+            else if (v_axis == -1)
+            {
+                move = 3;
+                audioSource.PlayOneShot(audioClip[3]);
+            }
+                next_input = Time.time + InputDelay;
+            }
         return move;
     }
 }
