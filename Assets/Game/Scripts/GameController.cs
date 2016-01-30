@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class GameController : MonoBehaviour
 
     public PlayerController playerController;
 
+    public Text ritual_name;
     private List<GameObject> quads;
     private List<int> generated_moves;
     private Transform quad_container;
@@ -21,6 +23,8 @@ public class GameController : MonoBehaviour
         quad_container = new GameObject("Quad Container").transform;
         quads = new List<GameObject>();
         generated_moves = new List<int>();
+
+        ritual_name.text = RitualNames[Random.Range(0, RitualNames.Count)];
 
         for (int i = 0; i < totalMoves; ++i)
         {
