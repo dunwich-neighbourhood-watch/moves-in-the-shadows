@@ -57,11 +57,11 @@ public class GameController : MonoBehaviour
         {
             // play animation
             // reset
-            current_move = 0;
             for(int i = 0; i < current_move; ++i)
             {
                 quads[i].GetComponent<MeshRenderer>().material = arrowMaterial;
             }
+            current_move = 0;
         }
 }
 
