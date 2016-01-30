@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : MonoBehaviour
+{
+    public float InputDelay = 0.5f;
+
+    private float next_input;
 
     public int ReturnMove ()
     {
@@ -12,16 +15,19 @@ public class PlayerController : MonoBehaviour {
 
         int move = -1;
 
-        // filter out double input
-        if ((h_axis != 0) && (v_axis != 0))
+        if (Time.time >= next_input)
         {
-            // do nothing
+            // filter out double input
+            if (h_axis != 0 && v_axis != 0)
+            {
+                // do nothing
+            }
+            else if (h_axis == 1) move = 0;
+            else if (h_axis == -1) move = 1;
+            else if (v_axis == 1) move = 2;
+            else if (v_axis == -1) move = 3;
+            next_input = Time.time + InputDelay;
         }
-        else if (h_axis == 1) move = 0;
-        else if (h_axis == -1) move = 1;
-        else if (v_axis == 1) move = 2;
-        else if (v_axis == -1) move = 3;
-
         return move;
     }
 }
