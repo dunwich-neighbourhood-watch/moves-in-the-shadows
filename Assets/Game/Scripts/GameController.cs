@@ -9,14 +9,15 @@ public class GameController : MonoBehaviour
     public Material completedArrowMaterial;
     public int totalMoves = 5;
 
-    private Timer game_time;
+    public PlayerController playerController;
+
     private List<GameObject> quads;
     private List<int> generated_moves;
     private Transform quad_container;
+    private int current_move = 0;
 
     // Use this for initialization
-    void Start()
-    {
+    void Start() { 
         quad_container = new GameObject("Quad Container").transform;
         quads = new List<GameObject>();
         generated_moves = new List<int>();
@@ -41,16 +42,28 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (true)//game_time.GetCurrent() <= 10.0f)
+        int playerMove = playerController.ReturnMove();
+        if (generated_moves[current_move] == playerMove)
         {
-            // wait
+            //change texture
+            quads[current_move].GetComponent<MeshRenderer>().material = completedArrowMaterial;
+
+            // play animation
+
+            // progress
+            ++current_move;
         }
-        else
+        else if (playerMove != -1)
         {
-            // move quads across screen
-            // record player input
+            // play animation
+            // reset
+            current_move = 0;
+            for(int i = 0; i < current_move; ++i)
+            {
+                quads[i].GetComponent<MeshRenderer>().material = arrowMaterial;
+            }
         }
-    }
+}
 
     private Vector3 ArrowRotationForMove(int move)
     {
