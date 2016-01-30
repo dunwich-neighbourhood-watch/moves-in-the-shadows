@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections.Generic;
+using Random = UnityEngine.Random;
 
 public class GameController : MonoBehaviour
 {
@@ -17,6 +19,7 @@ public class GameController : MonoBehaviour
     {
         quad_container = new GameObject("Quad Container").transform;
         quads = new List<GameObject>();
+        generated_moves = new List<int>();
 
         for (int i = 0; i < totalMoves; ++i)
         {
@@ -26,24 +29,8 @@ public class GameController : MonoBehaviour
             quad.transform.position = new Vector3(i - 2.5f, 3, -2);
 
             int move = Random.Range(0, 3);
-            Vector3 arrowRotation = new Vector3();
-            switch (move)
-            {
-                case 0:
-                    arrowRotation = Vector3.up;
-                    break;
-                case 1:
-                    arrowRotation = Vector3.down;
-                    break;
-                case 2:
-                    arrowRotation = Vector3.left;
-                    break;
-                case 3:
-                    arrowRotation = Vector3.right;
-                    break;
-                default:
-                    break;
-            }
+            Vector3 arrowRotation = ArrowRotationForMove(move);
+
             quad.transform.rotation = Quaternion.LookRotation(Vector3.forward, arrowRotation);
             quad.transform.SetParent(quad_container);
             quads.Add(quad);
@@ -64,4 +51,29 @@ public class GameController : MonoBehaviour
             // record player input
         }
     }
+
+    private Vector3 ArrowRotationForMove(int move)
+    {
+        switch (move)
+        {
+            case 0:
+                return Vector3.up;
+            case 1:
+                return Vector3.down;
+            case 2:
+                return Vector3.left;
+            case 3:
+                return Vector3.right;
+            default:
+                throw new Exception("Not a valid move.");
+        }
+    }
+
+    private readonly List<string> RitualNames = new List<string>
+        {
+            "Elder Thing Swing",
+            "Hastur's Hustle",
+            "Nyarlathotep Two-Step",
+            "Iä! Iä! Cthulhu fh'Tango!"
+        };
 }
