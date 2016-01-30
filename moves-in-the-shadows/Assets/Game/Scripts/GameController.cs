@@ -20,7 +20,7 @@ public class GameController : MonoBehaviour {
         quads = new List<GameObject>();
         total_moves = 5;
 
-        for (int i = 0; i <= total_moves; ++i)
+        for (int i = 0; i < total_moves; ++i)
         {
             int move = Random.Range(0, 3);
             generated_moves.Add(move);
@@ -35,7 +35,28 @@ public class GameController : MonoBehaviour {
         for (int i = 0; i < quads.Count; i++)
         {
             quads[i].GetComponent<MeshRenderer>().material = arrowMaterial;
-            quads[i].transform.position = new Vector3(i - 3, 3, -2);
+            quads[i].transform.position = new Vector3(i - 2.5f, 3, -2);
+
+            Vector3 arrowRotation = new Vector3();
+
+            switch (generated_moves[i])
+            {
+                case 0:
+                    arrowRotation = Vector3.up;
+                    break;
+                case 1:
+                    arrowRotation = Vector3.down;
+                    break;
+                case 2:
+                    arrowRotation = Vector3.left;
+                    break;
+                case 3:
+                    arrowRotation = Vector3.right;
+                    break;
+                default:
+                    break;
+            }
+            quads[i].transform.rotation = Quaternion.LookRotation(Vector3.forward, arrowRotation);
         }
 
     }
