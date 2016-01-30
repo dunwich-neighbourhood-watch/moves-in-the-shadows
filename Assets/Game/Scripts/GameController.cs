@@ -16,7 +16,7 @@ public class GameController : MonoBehaviour
 
     private int total_moves;
     private List<GameObject> quads;
-    private List<int> generated_moves;
+    private List<int> correct_moves;
     private Transform quad_container;
     private int current_move = 0;
     private List<GameObject> cultists;
@@ -27,7 +27,7 @@ public class GameController : MonoBehaviour
         quad_container = new GameObject("Quad Container").transform;
         quads = new List<GameObject>();
         cultists = new List<GameObject>();
-        generated_moves = new List<int>();
+        correct_moves = new List<int>();
         total_moves = Random.Range(minMoves, maxMoves + 1);
         ritualName.text = RitualNames[Random.Range(0, RitualNames.Count)];
 
@@ -36,7 +36,7 @@ public class GameController : MonoBehaviour
             GameObject quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
 
             quad.GetComponent<MeshRenderer>().material = arrowMaterial;
-            quad.transform.position = new Vector3(i + (1 - total_moves) / 2f, 3, -2);
+            quad.transform.position = new Vector3(i + (1 - total_moves) / 2f, 3f, -2f);
 
             int move = Random.Range(0, 3);
             Vector3 arrowRotation = ArrowRotationForMove(move);
@@ -44,7 +44,7 @@ public class GameController : MonoBehaviour
             quad.transform.rotation = Quaternion.LookRotation(Vector3.forward, arrowRotation);
             quad.transform.SetParent(quad_container);
             quads.Add(quad);
-            generated_moves.Add(move);
+            correct_moves.Add(move);
         }
 
         for (int i = 0; i < totalCultists; ++i)
@@ -65,9 +65,9 @@ public class GameController : MonoBehaviour
         if (current_move < total_moves)
         {
             int playerMove = playerController.ReturnMove();
-            if (generated_moves[current_move] == playerMove)
+            if (correct_moves[current_move] == playerMove)
             {
-                //change texture
+                // change texture
                 quads[current_move].GetComponent<MeshRenderer>().material = completedArrowMaterial;
 
                 // play animation
@@ -78,7 +78,8 @@ public class GameController : MonoBehaviour
             else if (playerMove != -1)
             {
                 // play animation
-                // reset
+
+                // reset texture and progress
                 for (int i = 0; i < current_move; ++i)
                 {
                     quads[i].GetComponent<MeshRenderer>().material = arrowMaterial;
@@ -93,12 +94,16 @@ public class GameController : MonoBehaviour
         switch (move)
         {
             case 0:
+                // right arrow
                 return Vector3.up;
             case 1:
+                // left arrow
                 return Vector3.down;
             case 2:
+                // up arrow
                 return Vector3.left;
             case 3:
+                // down arrow
                 return Vector3.right;
             default:
                 throw new Exception("Not a valid move.");
