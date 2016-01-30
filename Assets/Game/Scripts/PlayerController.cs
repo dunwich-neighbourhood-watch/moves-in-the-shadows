@@ -2,9 +2,9 @@
 
 public class PlayerController : MonoBehaviour
 {
-    public float InputDelay = 0.5f;
+    public float InputDelay = 0.2f;
 
-    private float next_input;
+    private float next_input = 0.0f;
 
     public int ReturnMove ()
     {
