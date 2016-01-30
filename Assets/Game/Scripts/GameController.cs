@@ -10,6 +10,7 @@ public class GameController : MonoBehaviour
     public Material completedArrowMaterial;
     public int minMoves = 3;
     public int maxMoves = 7;
+    public int totalCultists = 5;
     public PlayerController playerController;
     public Text ritualName;
 
@@ -18,12 +19,14 @@ public class GameController : MonoBehaviour
     private List<int> generated_moves;
     private Transform quad_container;
     private int current_move = 0;
+    private List<GameObject> cultists;
 
     // Use this for initialization
     void Start()
     {
         quad_container = new GameObject("Quad Container").transform;
         quads = new List<GameObject>();
+        cultists = new List<GameObject>();
         generated_moves = new List<int>();
         total_moves = Random.Range(minMoves, maxMoves + 1);
         ritualName.text = RitualNames[Random.Range(0, RitualNames.Count)];
@@ -42,6 +45,17 @@ public class GameController : MonoBehaviour
             quad.transform.SetParent(quad_container);
             quads.Add(quad);
             generated_moves.Add(move);
+        }
+
+        for (int i = 0; i < totalCultists; ++i)
+        {
+            GameObject cultist = GameObject.CreatePrimitive(PrimitiveType.Quad);
+
+            cultist.GetComponent<MeshRenderer>().material = arrowMaterial;
+            cultist.transform.position = new Vector3(i + (1 - totalCultists) / 2f, -2f, -1f);
+            
+
+            cultists.Add(cultist);
         }
     }
 
