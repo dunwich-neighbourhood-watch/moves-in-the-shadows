@@ -1,45 +1,33 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
-public class GameController : MonoBehaviour {
-
+public class GameController : MonoBehaviour
+{
     public Material arrowMaterial;
     public Material completedArrowMaterial;
+    public int totalMoves = 5;
 
     private Timer game_time;
-
-    private int total_moves;
-    private List<int> generated_moves;
     private List<GameObject> quads;
+    private List<int> generated_moves;
+    private Transform quad_container;
 
-	// Use this for initialization
-	void Start ()
+    // Use this for initialization
+    void Start()
     {
-        generated_moves = new List<int>();
+        quad_container = new GameObject("Quad Container").transform;
         quads = new List<GameObject>();
-        total_moves = 5;
 
-        for (int i = 0; i < total_moves; ++i)
+        for (int i = 0; i < totalMoves; ++i)
         {
+            GameObject quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+
+            quad.GetComponent<MeshRenderer>().material = arrowMaterial;
+            quad.transform.position = new Vector3(i - 2.5f, 3, -2);
+
             int move = Random.Range(0, 3);
-            generated_moves.Add(move);
-        }
-
-        // create quads with moves on
-        foreach (int move in generated_moves)
-        {
-            quads.Add(GameObject.CreatePrimitive(PrimitiveType.Quad));
-            
-        }
-        for (int i = 0; i < quads.Count; i++)
-        {
-            quads[i].GetComponent<MeshRenderer>().material = arrowMaterial;
-            quads[i].transform.position = new Vector3(i - 2.5f, 3, -2);
-
             Vector3 arrowRotation = new Vector3();
-
-            switch (generated_moves[i])
+            switch (move)
             {
                 case 0:
                     arrowRotation = Vector3.up;
@@ -56,15 +44,17 @@ public class GameController : MonoBehaviour {
                 default:
                     break;
             }
-            quads[i].transform.rotation = Quaternion.LookRotation(Vector3.forward, arrowRotation);
+            quad.transform.rotation = Quaternion.LookRotation(Vector3.forward, arrowRotation);
+            quad.transform.SetParent(quad_container);
+            quads.Add(quad);
+            generated_moves.Add(move);
         }
-
     }
-	
-	// Update is called once per frame
-	void Update ()
+
+    // Update is called once per frame
+    void Update()
     {
-	    if (true)//game_time.GetCurrent() <= 10.0f)
+        if (true)//game_time.GetCurrent() <= 10.0f)
         {
             // wait
         }
@@ -73,5 +63,5 @@ public class GameController : MonoBehaviour {
             // move quads across screen
             // record player input
         }
-	}
+    }
 }
