@@ -8,36 +8,115 @@ public class GameController : MonoBehaviour
 {
     public Material arrowMaterial;
     public Material completedArrowMaterial;
+    public Sprite[] cultistSprites = new Sprite[6];
     public int minMoves = 3;
     public int maxMoves = 7;
-    public int totalCultists = 5;
+    public int cultistRowPopulation = 7;
+    public int cultistRowCount = 4;
+    public float cultMoveTime = 0.25f;
     public PlayerController playerController;
     public Text ritualName;
+    public Text ritualStreak;
+    
+    private List<GameObject> arrows;
+    private Transform arrow_container;
 
     private int total_moves;
     private List<int> correct_moves;
-    private int current_move = 0;
-    private List<GameObject> arrows;
-    private Transform arrow_container;
+    private int player_move;
+    private int cult_move;
+    private float cult_next_move;
+    private bool cult_idle_next;
     private List<GameObject> cultists;
-    private bool player_finished = false;
+    private Transform cultist_container;
+    private int ritual_streak = 0;
 
     // Use this for initialization
     void Start()
     {
+        GenerateRitual();
+        InitialiseCultists();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (player_move != total_moves)
+        {
+            if (player_move < total_moves)
+            {
+                int playerMove = playerController.ReturnMove();
+                if (correct_moves[player_move] == playerMove)
+                {
+                    // change texture
+                    arrows[player_move].GetComponent<MeshRenderer>().material = completedArrowMaterial;
+
+                    // progress
+                    ++player_move;
+                }
+                else if (playerMove != -1)
+                {
+                    // reset texture and progress
+                    for (int i = 0; i < player_move; ++i)
+                    {
+                        arrows[i].GetComponent<MeshRenderer>().material = arrowMaterial;
+                    }
+                    player_move = 0;
+                    ritual_streak = 0;
+                    UpdateRitualStreak();
+                }
+                return;
+            }
+            else if (player_move != total_moves)
+            {
+                throw new Exception("Invalid state, current_move greater than total_moves");
+            }
+        }
+        else if (Time.time > cult_next_move)
+        {
+            if (cult_move != total_moves)
+            {
+                if (cult_idle_next)
+                {
+                    cultists.ForEach(c =>
+                        c.GetComponent<SpriteRenderer>().sprite = cultistSprites[0]);
+                    cult_idle_next = false;
+                }
+                else {
+                    var move = correct_moves[cult_move];
+                    cultists.ForEach(c =>
+                        c.GetComponent<SpriteRenderer>().sprite = cultistSprites[move + 1]);
+                    cult_move += 1;
+                    cult_idle_next = true;
+                }
+                cult_next_move = Time.time + cultMoveTime;
+            }
+            else
+            {
+                ritual_streak += 1;
+                cultists.ForEach(c => c.GetComponent<SpriteRenderer>().sprite = cultistSprites[5]);
+                arrows.ForEach(a => Destroy(a));
+                Destroy(arrow_container.gameObject);
+                GenerateRitual();
+            }
+        }
+    }
+
+    private void GenerateRitual()
+    {
+        ritualName.text = RitualNames[Random.Range(0, RitualNames.Count)];
+
         arrow_container = new GameObject("Arrow Container").transform;
         correct_moves = new List<int>();
         arrows = new List<GameObject>();
-        cultists = new List<GameObject>();
         total_moves = Random.Range(minMoves, maxMoves + 1);
-        ritualName.text = RitualNames[Random.Range(0, RitualNames.Count)];
 
         for (int i = 0; i < total_moves; ++i)
         {
             GameObject arrow = GameObject.CreatePrimitive(PrimitiveType.Quad);
 
             arrow.GetComponent<MeshRenderer>().material = arrowMaterial;
-            arrow.transform.position = new Vector3(i + (1 - total_moves) / 2f, 3f, -1f);
+            arrow.transform.position = new Vector3(i + (1 - total_moves) / 2f, 3.5f, -1f);
 
             int move = Random.Range(0, 3);
             Vector3 arrowRotation = ArrowRotationForMove(move);
@@ -48,61 +127,34 @@ public class GameController : MonoBehaviour
             correct_moves.Add(move);
         }
 
-        for (int i = 0; i < totalCultists; ++i)
-        {
-            GameObject cultist = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        player_move = 0;
+        cult_move = 0;
+        cult_idle_next = true;
+        UpdateRitualStreak();
+    }
 
-            cultist.GetComponent<MeshRenderer>().material = arrowMaterial;
-            cultist.transform.position = new Vector3(1.25f*i + (1 - totalCultists) / 2f, -2f, -1f);
-            
-            cultists.Add(cultist);
+    private void InitialiseCultists()
+    {
+        cultist_container = new GameObject("Cultist Container").transform;
+        cultists = new List<GameObject>();
+        for (int i = 0; i < cultistRowCount; ++i) {
+            for (int j = 0; j < cultistRowPopulation; ++j)
+            {
+                GameObject cultist = new GameObject("Cultist");
+
+                cultist.AddComponent<SpriteRenderer>();
+                cultist.GetComponent<SpriteRenderer>().sprite = cultistSprites[5];
+                cultist.transform.position = new Vector3(1.25f * (j + (1 - cultistRowPopulation) / 2f), -1.25f * i, -1f);
+                cultist.transform.SetParent(cultist_container);
+
+                cultists.Add(cultist);
+            }
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void UpdateRitualStreak()
     {
-        if (!player_finished)
-        {
-            if (current_move < total_moves)
-            {
-                int playerMove = playerController.ReturnMove();
-                if (correct_moves[current_move] == playerMove)
-                {
-                    // change texture
-                    arrows[current_move].GetComponent<MeshRenderer>().material = completedArrowMaterial;
-
-                    // progress
-                    ++current_move;
-                }
-                else if (playerMove != -1)
-                {
-                    // reset texture and progress
-                    for (int i = 0; i < current_move; ++i)
-                    {
-                        arrows[i].GetComponent<MeshRenderer>().material = arrowMaterial;
-                    }
-                    current_move = 0;
-                }
-            }
-            else if (current_move == total_moves)
-            {
-                player_finished = true;
-            }
-            else
-            {
-                // throw error
-            }
-        }
-        else if (false)//!picking)
-        {
-            // start cultist animation
-            
-        }
-        else
-        {
-            //throw error
-        }
+        ritualStreak.text = "Ritual Streak: " + ritual_streak + new string('!', (int)Math.Floor(Math.Log(ritual_streak + 1, 2)));
     }
 
     private Vector3 ArrowRotationForMove(int move)
