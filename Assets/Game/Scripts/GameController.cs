@@ -20,6 +20,7 @@ public class GameController : MonoBehaviour
     private Transform quad_container;
     private int current_move = 0;
     private List<GameObject> cultists;
+    private bool player_finished = false;
 
     // Use this for initialization
     void Start()
@@ -52,7 +53,7 @@ public class GameController : MonoBehaviour
             GameObject cultist = GameObject.CreatePrimitive(PrimitiveType.Quad);
 
             cultist.GetComponent<MeshRenderer>().material = arrowMaterial;
-            cultist.transform.position = new Vector3(i + (1 - totalCultists) / 2f, -2f, -1f);
+            cultist.transform.position = new Vector3(1.25f*i + (1 - totalCultists) / 2f, -2f, -1f);
             
 
             cultists.Add(cultist);
@@ -62,31 +63,45 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (current_move < total_moves)
+        if (!player_finished)
         {
-            int playerMove = playerController.ReturnMove();
-            if (correct_moves[current_move] == playerMove)
+            if (current_move < total_moves)
             {
-                // change texture
-                quads[current_move].GetComponent<MeshRenderer>().material = completedArrowMaterial;
-
-                // play animation
-
-
-                // progress
-                ++current_move;
-            }
-            else if (playerMove != -1)
-            {
-                // play animation
-
-                // reset texture and progress
-                for (int i = 0; i < current_move; ++i)
+                int playerMove = playerController.ReturnMove();
+                if (correct_moves[current_move] == playerMove)
                 {
-                    quads[i].GetComponent<MeshRenderer>().material = arrowMaterial;
+                    // change texture
+                    quads[current_move].GetComponent<MeshRenderer>().material = completedArrowMaterial;
+
+                    // progress
+                    ++current_move;
                 }
-                current_move = 0;
+                else if (playerMove != -1)
+                {
+                    // reset texture and progress
+                    for (int i = 0; i < current_move; ++i)
+                    {
+                        quads[i].GetComponent<MeshRenderer>().material = arrowMaterial;
+                    }
+                    current_move = 0;
+                }
             }
+            else if (current_move == total_moves)
+            {
+                player_finished = true;
+            }
+            else
+            {
+                // throw error
+            }
+        }
+        else if (false)//!picking)
+        {
+            // start cultist animation
+        }
+        else
+        {
+            //throw error
         }
     }
 
