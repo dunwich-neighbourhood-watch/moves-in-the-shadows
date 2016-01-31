@@ -15,36 +15,36 @@ public class GameController : MonoBehaviour
     public Text ritualName;
 
     private int total_moves;
-    private List<GameObject> quads;
     private List<int> correct_moves;
-    private Transform quad_container;
     private int current_move = 0;
+    private List<GameObject> arrows;
+    private Transform arrow_container;
     private List<GameObject> cultists;
     private bool player_finished = false;
 
     // Use this for initialization
     void Start()
     {
-        quad_container = new GameObject("Quad Container").transform;
-        quads = new List<GameObject>();
-        cultists = new List<GameObject>();
+        arrow_container = new GameObject("Arrow Container").transform;
         correct_moves = new List<int>();
+        arrows = new List<GameObject>();
+        cultists = new List<GameObject>();
         total_moves = Random.Range(minMoves, maxMoves + 1);
         ritualName.text = RitualNames[Random.Range(0, RitualNames.Count)];
 
         for (int i = 0; i < total_moves; ++i)
         {
-            GameObject quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            GameObject arrow = GameObject.CreatePrimitive(PrimitiveType.Quad);
 
-            quad.GetComponent<MeshRenderer>().material = arrowMaterial;
-            quad.transform.position = new Vector3(i + (1 - total_moves) / 2f, 3f, -1f);
+            arrow.GetComponent<MeshRenderer>().material = arrowMaterial;
+            arrow.transform.position = new Vector3(i + (1 - total_moves) / 2f, 3f, -1f);
 
             int move = Random.Range(0, 3);
             Vector3 arrowRotation = ArrowRotationForMove(move);
 
-            quad.transform.rotation = Quaternion.LookRotation(Vector3.forward, arrowRotation);
-            quad.transform.SetParent(quad_container);
-            quads.Add(quad);
+            arrow.transform.rotation = Quaternion.LookRotation(Vector3.forward, arrowRotation);
+            arrow.transform.SetParent(arrow_container);
+            arrows.Add(arrow);
             correct_moves.Add(move);
         }
 
@@ -55,7 +55,6 @@ public class GameController : MonoBehaviour
             cultist.GetComponent<MeshRenderer>().material = arrowMaterial;
             cultist.transform.position = new Vector3(1.25f*i + (1 - totalCultists) / 2f, -2f, -1f);
             
-
             cultists.Add(cultist);
         }
     }
@@ -71,7 +70,7 @@ public class GameController : MonoBehaviour
                 if (correct_moves[current_move] == playerMove)
                 {
                     // change texture
-                    quads[current_move].GetComponent<MeshRenderer>().material = completedArrowMaterial;
+                    arrows[current_move].GetComponent<MeshRenderer>().material = completedArrowMaterial;
 
                     // progress
                     ++current_move;
@@ -81,7 +80,7 @@ public class GameController : MonoBehaviour
                     // reset texture and progress
                     for (int i = 0; i < current_move; ++i)
                     {
-                        quads[i].GetComponent<MeshRenderer>().material = arrowMaterial;
+                        arrows[i].GetComponent<MeshRenderer>().material = arrowMaterial;
                     }
                     current_move = 0;
                 }

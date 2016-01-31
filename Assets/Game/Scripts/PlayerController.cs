@@ -3,20 +3,17 @@
 public class PlayerController : MonoBehaviour
 {
     public GameObject player;
-
-    public Material[] playerMaterials = new Material[5];
-
+    public Sprite[] playerSprites = new Sprite[5];
     public AudioSource audioSource;
     public AudioClip[] audioClip = new AudioClip[4];
+    public float timeBeforeIdle = 0.2f;
 
-    private float time_till_next_move;
+    private float time_till_idle;
 
     public int ReturnMove()
     {
-
         int move = -1;
         
-
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             move = 0;
@@ -37,8 +34,8 @@ public class PlayerController : MonoBehaviour
         if (move != -1)
         {
             audioSource.PlayOneShot(audioClip[move]);
-            player.GetComponent<MeshRenderer>().material = playerMaterials[move + 1];
-            time_till_next_move = Time.time + 0.5f;
+            player.GetComponent<SpriteRenderer>().sprite = playerSprites[move + 1];
+            time_till_idle = Time.time + timeBeforeIdle;
         }
 
         return move;
@@ -46,9 +43,9 @@ public class PlayerController : MonoBehaviour
 
     void Update ()
     {
-        if (time_till_next_move < Time.time)
+        if (time_till_idle < Time.time)
         {
-            player.GetComponent<MeshRenderer>().material = playerMaterials[0];
+            player.GetComponent<SpriteRenderer>().sprite = playerSprites[0];
         }
     }
 }

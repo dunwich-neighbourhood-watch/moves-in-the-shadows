@@ -35,15 +35,15 @@
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
-			float xshift;
+			float _xshift;
 			
 			v2f vert (appdata v)
 			{
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-				o.uv.x *= 0.1f;
-				o.uv.x += 0.1f*xshift;
+				o.uv.x *= 0.2f;
+				o.uv.x += 0.2f*_xshift;
 				UNITY_TRANSFER_FOG(o,o.vertex);
 				return o;
 			}
