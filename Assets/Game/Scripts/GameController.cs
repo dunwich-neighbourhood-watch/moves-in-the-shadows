@@ -37,7 +37,7 @@ public class GameController : MonoBehaviour
             GameObject quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
 
             quad.GetComponent<MeshRenderer>().material = arrowMaterial;
-            quad.transform.position = new Vector3(i + (1 - total_moves) / 2f, 3f, -2f);
+            quad.transform.position = new Vector3(i + (1 - total_moves) / 2f, 3f, -1f);
 
             int move = Random.Range(0, 3);
             Vector3 arrowRotation = ArrowRotationForMove(move);
@@ -98,6 +98,7 @@ public class GameController : MonoBehaviour
         else if (false)//!picking)
         {
             // start cultist animation
+            
         }
         else
         {
