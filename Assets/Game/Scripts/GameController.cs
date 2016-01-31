@@ -72,6 +72,7 @@ public class GameController : MonoBehaviour
 
                 // play animation
 
+
                 // progress
                 ++current_move;
             }
